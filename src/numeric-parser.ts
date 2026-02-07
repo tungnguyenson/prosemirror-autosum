@@ -57,12 +57,27 @@ export function parseNumericValue(text: string): ParsedNumber | null {
     // Reset regex lastIndex for global regex
     NUMERIC_PATTERN.lastIndex = 0;
 
-    const match = NUMERIC_PATTERN.exec(text);
-    if (!match) {
+    const matches = Array.from(text.matchAll(NUMERIC_PATTERN));
+    if (matches.length === 0) {
         return null;
     }
 
-    const [original, numberStr, unit = ''] = match;
+    // Preference logic:
+    // 1. Prefer those with units (k, m, tr)
+    // 2. If multiple or none with units, take the last one (usually the amount)
+
+    let bestMatch = matches[0];
+
+    // Look for the first one with a unit
+    const withUnit = matches.find(m => m[2]);
+    if (withUnit) {
+        bestMatch = withUnit;
+    } else {
+        // Otherwise take the last one
+        bestMatch = matches[matches.length - 1];
+    }
+
+    const [original, numberStr, unit = ''] = bestMatch;
     const baseValue = parseFloat(numberStr);
 
     if (isNaN(baseValue)) {
