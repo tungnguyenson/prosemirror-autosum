@@ -25,7 +25,7 @@ function createValue(text: string): HTMLElement {
     const strong = document.createElement("strong");
     strong.textContent = text;
     strong.className = "autosum-value";
-    strong.style.color = "#0f172a"; // Dark text for value
+    // strong.style.color = "#0f172a"; // Dark text for value
     return strong;
 }
 
